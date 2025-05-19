@@ -23,7 +23,7 @@ for i in range(1, num_episode+1):
     truncated = False
     score = 0
     while (not terminated and not truncated):
-        action = agent.choose_action(observation, is_training)
+        action = agent.choose_action(observation, is_training, (num_episode-i)/num_episode)
         new_state, reward, terminated, truncated, info = env.step(action)
         if (not truncated):
             agent.remember(observation, action, reward, new_state, int(terminated))
@@ -42,7 +42,7 @@ filename = 'training_result.png'
 N = len(score_history)
 running_avg = np.empty(N)
 for t in range(N):
-    running_avg[t] = np.mean(score_history[max(0, t-5):(t+1)])
+    running_avg[t] = np.mean(score_history[max(0, t-100):(t+1)])
 x = [i for i in range(N)]
 plt.ylabel('Score')       
 plt.xlabel('Game')                     

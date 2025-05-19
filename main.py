@@ -21,7 +21,7 @@ for i in range(1, num_episode+1):
     truncated = False
     score = 0
     while (not terminated and not truncated):
-        action = agent.choose_action(observation, is_training)
+        action = agent.choose_action(observation, is_training, (num_episode-i)/num_episode)
         new_state, reward, terminated, truncated, info = env.step(action)
         if (not truncated):
             agent.remember(observation, action, reward, new_state, int(terminated))

@@ -36,7 +36,7 @@ class Agent(object):
 
         self.update_network_parameters(tau=1)
 
-    def choose_action(self, observation, is_training):    
+    def choose_action(self, observation, is_training, expl_prob=0):
         self.actor.eval()
         observation = T.tensor(observation, dtype=T.float).to(self.actor.device)
         mu = self.actor.forward(observation).to(self.actor.device)
@@ -44,15 +44,8 @@ class Agent(object):
         # Epsilon-greedy exploration
         if (is_training == True):
             epsilon = np.random.rand()
-            if (self.memory.mem_cntr < 100000):
-                if (epsilon < 0.5):
-                    mu += T.tensor(self.noise(), dtype=T.float).to(self.actor.device)
-            elif (self.memory.mem_cntr < 300000):
-                if (epsilon < 0.25):
-                    mu += T.tensor(self.noise(), dtype=T.float).to(self.actor.device)
-            else:
-                if (epsilon < 0.1):
-                    mu += T.tensor(self.noise(), dtype=T.float).to(self.actor.device)     
+            if (epsilon < expl_prob):
+                mu += T.tensor(self.noise(), dtype=T.float).to(self.actor.device)
 
         self.actor.train()
         return mu.cpu().detach().numpy()
